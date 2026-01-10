@@ -1,0 +1,514 @@
+{
+  "services": {
+    "node1": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8001:8000",
+        "9001:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node2": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8002:8000",
+        "9002:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node3": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8003:8000",
+        "9003:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node4": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8004:8000",
+        "9004:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node5": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8005:8000",
+        "9005:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node6": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8006:8000",
+        "9006:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node7": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8007:8000",
+        "9007:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node8": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8008:8000",
+        "9008:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node9": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8009:8000",
+        "9009:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node10": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8010:8000",
+        "9010:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node11": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8011:8000",
+        "9011:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node12": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8012:8000",
+        "9012:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node13": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8013:8000",
+        "9013:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node14": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8014:8000",
+        "9014:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node15": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8015:8000",
+        "9015:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node16": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8016:8000",
+        "9016:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node17": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8017:8000",
+        "9017:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node18": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8018:8000",
+        "9018:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node19": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8019:8000",
+        "9019:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node20": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8020:8000",
+        "9020:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node21": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8021:8000",
+        "9021:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node22": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8022:8000",
+        "9022:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node23": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8023:8000",
+        "9023:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node24": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8024:8000",
+        "9024:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node25": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8025:8000",
+        "9025:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node26": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8026:8000",
+        "9026:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node27": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8027:8000",
+        "9027:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node28": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8028:8000",
+        "9028:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node29": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8029:8000",
+        "9029:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    },
+    "node30": {
+      "build": {
+        "context": ".",
+        "dockerfile": "docker/messenger.Dockerfile"
+      },
+      "ports": [
+        "8030:8000",
+        "9030:9000"
+      ],
+      "environment": [
+        "P2P_PORT=9000"
+      ],
+      "volumes": [
+        "./backend:/app/backend",
+        "./frontend:/app/backend/frontend"
+      ]
+    }
+  }
+}
