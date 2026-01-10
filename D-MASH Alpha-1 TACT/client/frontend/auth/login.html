@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D-MASH ACCESS</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .terminal { border: 2px solid #0f0; padding: 40px; width: 400px; box-shadow: 0 0 20px #0f0; }
+        input { background: #000; border: none; border-bottom: 1px solid #0f0; color: #0f0; width: 100%; padding: 10px; margin: 10px 0; font-family: inherit; font-size: 18px; outline: none; }
+        button { background: #0f0; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background: #0a0; }
+        h1 { text-align: center; margin-top: 0; text-shadow: 0 0 10px #0f0; }
+        label { font-size: 12px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <h1>D-MASH NODE</h1>
+        
+        <label>> USERNAME (IDENTITY):</label>
+        <input type="text" id="username" autofocus>
+        
+        <label>> ACCESS KEY (PASSWORD):</label>
+        <input type="password" id="pwd">
+        
+        <button onclick="login()">INITIALIZE SYSTEM</button>
+    </div>
+    <script>
+        async function login() {
+            const user = document.getElementById('username').value;
+            const pwd = document.getElementById('pwd').value;
+            
+            if (!user || !pwd) {
+                alert("IDENTITY REQUIRED");
+                return;
+            }
+
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: user, password: pwd})
+            });
+            const data = await res.json();
+            if(data.status === 'ok') {
+                localStorage.setItem('my_id', data.user_id);
+                window.location.href = '/chat/chat.html';
+            }
+        }
+    </script>
+</body>
+</html>

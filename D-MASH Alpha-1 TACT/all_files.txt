@@ -1,0 +1,1690 @@
+================================================================================
+СБОРКА ВСЕХ ФАЙЛОВ ИЗ ДИРЕКТОРИИ
+Директория: C:\projects\backups\D-MASH Alpha-1
+Дата сборки: 09.01.2026
+================================================================================
+
+
+================================================================================
+ФАЙЛ: all_files.txt
+Размер: 0 байт
+================================================================================
+
+
+
+================================================================================
+ФАЙЛ: file_collector.py
+Размер: 6473 байт
+================================================================================
+
+# file_collector.py
+import os
+import sys
+from pathlib import Path
+
+def collect_files_to_txt(root_dir=".", output_file="all_files.txt", extensions=None):
+    """
+    Собирает содержимое всех файлов в один текстовый файл
+    
+    Args:
+        root_dir: Корневая директория для поиска (по умолчанию текущая)
+        output_file: Имя выходного файла
+        extensions: Список расширений для включения (None = все файлы)
+    """
+    root_path = Path(root_dir).resolve()
+    output_path = Path(output_file)
+    
+    print(f"📁 Сбор файлов из: {root_path}")
+    print(f"📄 Выходной файл: {output_path}")
+    
+    collected_count = 0
+    skipped_count = 0
+    
+    with open(output_path, 'w', encoding='utf-8') as output:
+        # Заголовок
+        output.write("=" * 80 + "\n")
+        output.write(f"СБОРКА ВСЕХ ФАЙЛОВ ИЗ ДИРЕКТОРИИ\n")
+        output.write(f"Директория: {root_path}\n")
+        output.write(f"Дата сборки: {os.popen('date /t').read().strip() if os.name == 'nt' else os.popen('date').read().strip()}\n")
+        output.write("=" * 80 + "\n\n")
+        
+        # Рекурсивный обход всех файлов
+        for file_path in root_path.rglob('*'):
+            if file_path.is_file():
+                # Проверка расширения
+                if extensions and file_path.suffix.lower() not in extensions:
+                    skipped_count += 1
+                    continue
+                
+                # Пропускаем сам выходной файл
+                if file_path == output_path:
+                    continue
+                
+                # Пропускаем системные файлы и временные файлы
+                if file_path.name.startswith('.') or file_path.name.startswith('~'):
+                    continue
+                
+                try:
+                    # Записываем разделитель
+                    relative_path = file_path.relative_to(root_path)
+                    output.write("\n" + "=" * 80 + "\n")
+                    output.write(f"ФАЙЛ: {relative_path}\n")
+                    output.write(f"Размер: {file_path.stat().st_size} байт\n")
+                    output.write("=" * 80 + "\n\n")
+                    
+                    # Пытаемся прочитать файл
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                            output.write(content)
+                            if not content.endswith('\n'):
+                                output.write('\n')
+                    except UnicodeDecodeError:
+                        # Если не UTF-8, пробуем другие кодировки
+                        for encoding in ['cp1251', 'latin-1', 'iso-8859-1']:
+                            try:
+                                with open(file_path, 'r', encoding=encoding) as f:
+                                    content = f.read()
+                                    output.write(content)
+                                    if not content.endswith('\n'):
+                                        output.write('\n')
+                                    output.write(f"\n[Примечание: файл прочитан в кодировке {encoding}]\n")
+                                break
+                            except:
+                                continue
+                        else:
+                            # Если текстовый файл не читается, пропускаем
+                            output.write(f"[БИНАРНЫЙ ФАЙЛ - СОДЕРЖИМОЕ НЕ ПОКАЗАНО]\n")
+                    
+                    collected_count += 1
+                    print(f"✓ Добавлен: {relative_path}")
+                    
+                except Exception as e:
+                    output.write(f"[ОШИБКА ЧТЕНИЯ ФАЙЛА: {e}]\n")
+                    print(f"✗ Ошибка: {file_path} - {e}")
+                    skipped_count += 1
+    
+    # Статистика в конец файла
+    with open(output_path, 'a', encoding='utf-8') as output:
+        output.write("\n" + "=" * 80 + "\n")
+        output.write("СТАТИСТИКА СБОРКИ\n")
+        output.write("=" * 80 + "\n")
+        output.write(f"Всего собрано файлов: {collected_count}\n")
+        output.write(f"Пропущено файлов: {skipped_count}\n")
+        output.write(f"Общий размер выходного файла: {output_path.stat().st_size} байт\n")
+    
+    print(f"\n✅ Готово! Собрано {collected_count} файлов в {output_file}")
+    print(f"📊 Пропущено: {skipped_count} файлов")
+    print(f"💾 Размер выходного файла: {output_path.stat().st_size} байт")
+
+def main():
+    """Основная функция с обработкой аргументов командной строки"""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Сборка всех файлов в директории в один текстовый файл')
+    parser.add_argument('-d', '--dir', default='.', help='Корневая директория (по умолчанию текущая)')
+    parser.add_argument('-o', '--output', default='all_files.txt', help='Имя выходного файла')
+    parser.add_argument('-e', '--extensions', nargs='+', help='Расширения файлов для включения (например: .py .txt .md)')
+    
+    args = parser.parse_args()
+    
+    # Преобразуем расширения в список с точками
+    extensions = None
+    if args.extensions:
+        extensions = [ext if ext.startswith('.') else f'.{ext}' for ext in args.extensions]
+        print(f"📋 Включаем только файлы с расширениями: {', '.join(extensions)}")
+    
+    collect_files_to_txt(args.dir, args.output, extensions)
+
+if __name__ == "__main__":
+    main()
+
+================================================================================
+ФАЙЛ: README.md
+Размер: 3892 байт
+================================================================================
+
+# Messenger P2P
+
+A secure, end-to-end encrypted peer-to-peer messaging application with offline message support.
+
+## Project Overview
+
+Messenger P2P is a modern messaging platform that combines the security of end-to-end encryption with the flexibility of both peer-to-peer and server-relayed messaging. Built with privacy and security in mind, it ensures your communications remain private through strong cryptographic algorithms.
+
+#### UI of an application:
+![MessengerUI](chatUI.jpg)
+
+### Key Features
+
+- **End-to-End Encryption**: All messages are encrypted using XSalsa20-Poly1305 and Curve25519 elliptic curve cryptography
+- **Peer-to-Peer Communication**: Direct WebRTC connections between online users
+- **Offline Messaging**: Messages to offline users are encrypted with long-term keys and stored for later retrieval
+- **Local Message Storage**: Encrypted database ensures message history is securely preserved
+- **Intuitive UI**: Clean and responsive web interface for seamless messaging
+- **Docker Deployment**: Easy setup and deployment through containerization
+
+## Technical Architecture
+
+### Backend
+
+- **FastAPI**: High-performance web framework for API endpoints
+- **WebSockets**: Real-time bidirectional communication
+- **WebRTC**: Peer-to-peer connections with ICE/STUN for NAT traversal
+- **PyNaCl**: Cryptographic library for secure encryption
+- **PostgreSQL**: Encrypted message and chat storage
+
+### Frontend
+
+- **Vanilla JavaScript**: Clean, framework-free implementation
+- **HTML5/CSS3**: Responsive design for desktop environments
+- **WebRTC API**: Browser-based peer-to-peer connections
+
+### Security Model
+
+1. **User Authentication**: Password-based authentication with Argon2id key derivation
+2. **Local Storage Encryption**: User database encrypted with symmetric XSalsa20-Poly1305
+3. **Transport Security**: TLS/SSL for all HTTP and WebSocket connections
+4. **Message Encryption**:
+   - **Online Users**: Ephemeral key exchange for perfect forward secrecy
+   - **Offline Users**: Long-term public key encryption
+
+## How It Works
+
+1. **User Registration/Login**:
+   - Create an account with a unique user ID and password
+   - Password is hashed with SHA-256 on client side
+   - Backend derives encryption keys using Argon2id
+
+2. **Chat Initialization**:
+   - Users can create chats with other registered users
+   - Long-term public keys are exchanged via server
+
+3. **Messaging Flow**:
+   - **When Both Users Online**:
+     - Messages encrypted with ephemeral keys
+     - Delivered via WebRTC data channel or server relay
+   
+   - **When Recipient is Offline**:
+     - Messages encrypted with recipient's long-term public key
+     - Stored on server for later retrieval
+     - Delivered when recipient comes online
+
+4. **Message Synchronization**:
+   - Frontend periodically polls for new chats and messages
+   - Messages are decrypted locally and displayed in UI
+   - Date dividers and read indicators provide context
+
+## Setup and Installation
+
+### Prerequisites
+
+- Docker and Docker Compose
+- SSL certificates (or use provided self-signed certs for development)
+- Environment variables file (.env)
+
+### Environment Variables
+
+Create a `.env` file with the following variables:
+
+### Running the Application
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/messenger-p2p-project.git
+   cd messenger-p2p-project/client
+   ```
+
+2. Create the .env file with environment variables as described above
+POSTGRES_USER_CLIENT=postgres POSTGRES_PASSWORD_CLIENT=password POSTGRES_DB_CLIENT=messenger_db DATABASE_URL_CLIENT=postgresql://postgres:password@user_database:5432/messenger_db
+
+3. Create the messenger network in Docker:
+```bash
+docker network create messenger_network
+```
+
+4. Start the application using Docker Compose:
+```bash
+docker-compose -f user-docker-compose.yml up --build
+```
+
+5. Access the application:
+https://localhost
+
+================================================================================
+ФАЙЛ: client\requirements.txt
+Размер: 121 байт
+================================================================================
+
+fastapi==0.109.0
+uvicorn==0.27.0
+websockets==12.0
+aiosqlite==0.19.0
+PyNaCl==1.5.0
+pydantic==2.6.0
+python-multipart==0.0.9
+
+================================================================================
+ФАЙЛ: client\user-docker-compose.yml
+Размер: 1126 байт
+================================================================================
+
+services:
+  node1:
+    build:
+      context: .
+      dockerfile: docker/messenger.Dockerfile
+    ports:
+      - "8001:8000" # Web UI
+      - "9001:9000" # P2P Port
+    environment:
+      - P2P_PORT=9000
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/backend/frontend
+
+  node2:
+    build:
+      context: .
+      dockerfile: docker/messenger.Dockerfile
+    ports:
+      - "8002:8000" # Web UI
+      - "9002:9000" # P2P Port
+    environment:
+      - P2P_PORT=9000
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/backend/frontend
+  
+  node3:
+    build:
+      context: .
+      dockerfile: docker/messenger.Dockerfile
+    ports:
+      - "8003:8000" # Web UI
+      - "9003:9000" # P2P Port
+    environment:
+      - P2P_PORT=9000
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/backend/frontend
+
+  node4:
+    build:
+      context: .
+      dockerfile: docker/messenger.Dockerfile
+    ports:
+      - "8004:8000" # Web UI
+      - "9004:9000" # P2P Port
+    environment:
+      - P2P_PORT=9000
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/backend/frontend
+
+================================================================================
+ФАЙЛ: client\backend\api.py
+Размер: 5604 байт
+================================================================================
+
+import os
+import hashlib
+import json
+import uuid
+from datetime import datetime
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
+from typing import Optional
+from nacl.public import PrivateKey
+from nacl.encoding import Base64Encoder
+
+# Импортируем только state из core
+from core import state
+from database import DatabaseManager
+
+# Создаем APIRouter
+router = APIRouter()
+
+# --- Pydantic Models ---
+class LoginData(BaseModel):
+    username: str
+    password: str
+class ConnectData(BaseModel):
+    address: str
+class SendData(BaseModel):
+    target_id: str
+    text: str
+class RenameData(BaseModel):
+    target_id: str
+    name: Optional[str] = None
+class ReadChatData(BaseModel):
+    chat_id: str
+
+# --- API ROUTES (используем @router) ---
+
+@router.get("/")
+async def root():
+    return RedirectResponse(url="/auth/login.html")
+
+@router.post("/api/login")
+async def login(data: LoginData):
+    combo = f"{data.username}|{data.password}"
+    seed = hashlib.sha256(combo.encode()).digest()
+    sk = PrivateKey(seed)
+    new_user_id = hashlib.sha256(sk.public_key.encode(Base64Encoder)).hexdigest()[:16]
+    
+    if state.is_logged_in and state.user_id != new_user_id:
+        if state.db: await state.db.close()
+        state.is_logged_in = False
+        print(f"🔄 Switching user to {new_user_id[:8]}")
+    
+    if not state.is_logged_in:
+        db_name = f"node_{new_user_id}.db"
+        state.user_id = new_user_id
+        state.db = DatabaseManager(db_name)
+        await state.db.connect()
+        
+        state.node.db = state.db
+        state.node.my_id = new_user_id
+        state.tact.db = state.db
+        
+        state.is_logged_in = True
+    
+    return {"status": "ok", "user_id": new_user_id}
+
+@router.post("/api/logout")
+async def logout():
+    if state.is_logged_in:
+        print(f"🔒 Logging out user {state.user_id[:8]}")
+        if state.db: await state.db.close()
+        state.db = None
+        state.user_id = ""
+        state.is_logged_in = False
+        state.node.my_id = "daemon_node_idle"
+    return {"status": "ok"}
+
+@router.post("/api/connect")
+async def connect_peer(data: ConnectData):
+    if not state.node: raise HTTPException(400, "Node not ready")
+    res = await state.node.connect_to(data.address)
+    return {"success": res}
+
+@router.post("/api/rename")
+async def rename_peer(data: RenameData):
+    if not state.db: raise HTTPException(400)
+    sql = "INSERT INTO peers (user_id, nickname, is_contact) VALUES (?, ?, 1) ON CONFLICT(user_id) DO UPDATE SET is_contact=1"
+    params = [data.target_id, data.name]
+    if data.name:
+        sql += ", nickname=excluded.nickname"
+    await state.db.conn.execute(sql, params)
+    await state.db.conn.commit()
+    return {"status": "ok"}
+
+@router.post("/api/send")
+async def send_message(data: SendData):
+    if not state.db: raise HTTPException(400)
+    
+    await state.db.conn.execute("INSERT INTO messages (chat_id, sender_id, content, timestamp, is_outgoing, is_read) VALUES (?, ?, ?, ?, 1, 1)", (data.target_id, state.user_id, data.text, datetime.now().isoformat()))
+    await state.db.conn.execute("INSERT OR IGNORE INTO peers (user_id, is_contact) VALUES (?, 1)", (data.target_id,))
+
+    pkt_id = str(uuid.uuid4())
+    packet = {"id": pkt_id, "to": data.target_id, "from": state.user_id, "content": data.text, "ttl": 20}
+    packet_str = json.dumps(packet)
+    
+    await state.db.conn.execute("INSERT INTO outbox (packet_id, target_id, packet_json) VALUES (?, ?, ?)", (pkt_id, data.target_id, packet_str))
+    await state.db.conn.commit()
+    return {"status": "queued"}
+
+@router.post("/api/read_chat")
+async def mark_chat_as_read(data: ReadChatData):
+    if not state.db: raise HTTPException(400)
+    await state.db.conn.execute("UPDATE messages SET is_read = 1 WHERE chat_id = ? AND is_outgoing = 0", (data.chat_id,))
+    await state.db.conn.commit()
+    return {"status": "ok"}
+
+@router.get("/api/state")
+async def get_state():
+    if not state.node: return {"status": "offline"}
+    return {"user_id": state.user_id, "peers": list(state.node.active_connections.keys())}
+
+@router.get("/api/peers")
+async def get_contacts():
+    if not state.db: return []
+    async with state.db.conn.execute("SELECT p.user_id, p.nickname, (SELECT COUNT(id) FROM messages WHERE chat_id = p.user_id AND is_read = 0 AND is_outgoing = 0) as unread_count FROM peers p WHERE p.is_contact = 1") as cursor:
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
+@router.get("/api/messages/{chat_id}")
+async def get_chat_history(chat_id: str):
+    if not state.db: return []
+    
+    # Шаг 1: Получаем все сообщения для этого чата
+    async with state.db.conn.execute("SELECT * FROM messages WHERE chat_id = ? ORDER BY timestamp ASC", (chat_id,)) as cursor:
+        rows = await cursor.fetchall()
+    
+    # Шаг 2: СРАЗУ ЖЕ после получения, помечаем их как прочитанные
+    # Это атомарно решает проблему "фантомных" бейджей
+    await state.db.conn.execute("UPDATE messages SET is_read = 1 WHERE chat_id = ? AND is_outgoing = 0", (chat_id,))
+    await state.db.conn.commit()
+    
+    # Шаг 3: Возвращаем сообщения, которые мы только что получили
+    return [dict(row) for row in rows]
+
+================================================================================
+ФАЙЛ: client\backend\core.py
+Размер: 1428 байт
+================================================================================
+
+import os
+from contextlib import asynccontextmanager
+from typing import Optional, Set
+import asyncio
+# Убираем импорт FastAPI
+
+from database import DatabaseManager
+from network import P2PNode
+from tact import TactEngine
+
+# --- D-MASH CONFIGURATION ---
+TACT_INTERVAL = 1.5
+PACKET_SIZE = 4096
+P2P_PORT = int(os.getenv("P2P_PORT", 9000))
+
+class AppState:
+    node: Optional[P2PNode] = None
+    tact: Optional[TactEngine] = None
+    db: Optional[DatabaseManager] = None
+    user_id: str = ""
+    is_logged_in: bool = False
+    background_tasks: Set[asyncio.Task] = set()
+
+state = AppState()
+
+@asynccontextmanager
+async def lifespan(app): # FastAPI передаст сюда 'app', но мы его не используем
+    bootstrap_db = DatabaseManager("bootstrap_peers.db")
+    await bootstrap_db.connect()
+
+    state.node = P2PNode(bootstrap_db, "daemon_node_idle")
+    state.tact = TactEngine(bootstrap_db, state.node, TACT_INTERVAL, PACKET_SIZE)
+    
+    t1 = asyncio.create_task(state.node.start_server(P2P_PORT))
+    t2 = asyncio.create_task(state.tact.start())
+    state.background_tasks.update([t1, t2])
+    t1.add_done_callback(state.background_tasks.discard)
+    t2.add_done_callback(state.background_tasks.discard)
+    
+    yield
+    
+    for task in state.background_tasks: task.cancel()
+    if state.db: await state.db.close()
+    await bootstrap_db.close()
+
+================================================================================
+ФАЙЛ: client\backend\database.py
+Размер: 1727 байт
+================================================================================
+
+import aiosqlite
+from datetime import datetime
+
+class DatabaseManager:
+    """
+    Менеджер локальной SQLite базы данных.
+    У каждого пользователя (ID) своя база данных.
+    """
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.conn = None
+
+    async def connect(self):
+        self.conn = await aiosqlite.connect(self.db_path)
+        self.conn.row_factory = aiosqlite.Row
+        await self._init_tables()
+
+    async def _init_tables(self):
+        await self.conn.execute("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, chat_id TEXT, sender_id TEXT, content TEXT, timestamp TEXT, is_outgoing INTEGER, is_read INTEGER DEFAULT 0)")
+        await self.conn.execute("CREATE TABLE IF NOT EXISTS outbox (id INTEGER PRIMARY KEY, packet_id TEXT, target_id TEXT, packet_json TEXT, exclude_peer TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        await self.conn.execute("CREATE TABLE IF NOT EXISTS peers (user_id TEXT PRIMARY KEY, address TEXT, nickname TEXT, is_contact INTEGER DEFAULT 0, last_seen TEXT)")
+        await self.conn.execute("CREATE TABLE IF NOT EXISTS seen_packets (packet_id TEXT PRIMARY KEY, received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        await self.conn.commit()
+
+    async def close(self):
+        if self.conn:
+            await self.conn.close()
+
+    async def mark_packet_seen(self, packet_id: str) -> bool:
+        try:
+            await self.conn.execute("INSERT INTO seen_packets (packet_id) VALUES (?)", (packet_id,))
+            await self.conn.commit()
+            return True
+        except aiosqlite.IntegrityError:
+            return False
+
+================================================================================
+ФАЙЛ: client\backend\main.py
+Размер: 1186 байт
+================================================================================
+
+import uvicorn
+import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
+# Импортируем lifespan из core и router из api
+from core import lifespan
+from api import router
+
+# --- СОЗДАЕМ И СОБИРАЕМ ПРИЛОЖЕНИЕ ЗДЕСЬ ---
+app = FastAPI(lifespan=lifespan)
+
+# 1. Подключаем Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 2. Подключаем все API-роуты
+app.include_router(router)
+
+# 3. В самом конце монтируем статику
+frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+
+# --- ТОЧКА ВХОДА ---
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app", # <-- Запускаем 'app' из ЭТОГО файла
+        host="0.0.0.0", 
+        port=8000, 
+        reload=False,
+        ssl_keyfile="/app/certs/key.pem", 
+        ssl_certfile="/app/certs/cert.pem"
+    )
+
+================================================================================
+ФАЙЛ: client\backend\network.py
+Размер: 7685 байт
+================================================================================
+
+import asyncio
+import json
+from datetime import datetime
+from websockets.server import serve
+from websockets.client import connect as ws_connect
+from database import DatabaseManager
+
+class P2PNode:
+    """
+    Сетевой демон. Работает постоянно.
+    Принимает соединения, держит сокеты, маршрутизирует пакеты.
+    """
+    def __init__(self, db: DatabaseManager, my_id: str):
+        self.db = db
+        self.my_id = my_id
+        self.active_connections = {} # user_id -> websocket
+
+    async def start_server(self, port: int):
+        print(f"🌐 [P2P] Listening on port {port}")
+        async with serve(self._handle_incoming, "0.0.0.0", port):
+            await asyncio.Future()
+
+    async def connect_to(self, address: str):
+        try:
+            uri = f"ws://{address}"
+            ws = await ws_connect(uri, open_timeout=5)
+            await ws.send(self.my_id)
+            peer_id = await ws.recv()
+            
+            if peer_id == self.my_id:
+                print("⚠️ [P2P] Self-connection attempt blocked.")
+                await ws.close()
+                return False
+
+            self.active_connections[peer_id] = ws
+            print(f"✅ [P2P] Connected to neighbor {peer_id[:8]}")
+            
+            await self.db.conn.execute("INSERT OR IGNORE INTO peers (user_id, address, last_seen) VALUES (?, ?, ?)", (peer_id, address, datetime.now().isoformat()))
+            await self.db.conn.commit()
+            
+            asyncio.create_task(self._listen_socket(ws, peer_id))
+            return True
+        except Exception as e:
+            print(f"❌ [P2P] Connection failed: {e}")
+            return False
+
+    async def _handle_incoming(self, websocket):
+        try:
+            peer_id = await websocket.recv()
+            if peer_id == self.my_id:
+                await websocket.close()
+                return
+            await websocket.send(self.my_id)
+            self.active_connections[peer_id] = websocket
+            print(f"🔗 [P2P] Neighbor connected: {peer_id[:8]}")
+            await self.db.conn.execute("INSERT OR IGNORE INTO peers (user_id, last_seen) VALUES (?, ?)", (peer_id, datetime.now().isoformat()))
+            await self.db.conn.commit()
+            await self._listen_socket(websocket, peer_id)
+        except Exception:
+            pass
+
+    async def _listen_socket(self, websocket, peer_id):
+        try:
+            async for message in websocket:
+                await self._process_envelope(message, from_peer=peer_id)
+        except:
+            if peer_id in self.active_connections:
+                del self.active_connections[peer_id]
+            print(f"Neighbor {peer_id[:8]} disconnected")
+
+    async def _process_envelope(self, envelope_json: str, from_peer: str):
+        """
+        ГЛАВНАЯ ЛОГИКА МАРШРУТИЗАЦИИ (Сортировочный центр)
+        """
+        try:
+            envelope = json.loads(envelope_json)
+            
+            # 1. Игнорируем мусорный трафик
+            if envelope.get("t") == "DUMMY":
+                return
+
+            # 2. Обрабатываем реальный пакет
+            if envelope.get("t") == "REAL":
+                inner_json = envelope.get("d")
+                packet = json.loads(inner_json)
+                
+                pkt_id = packet.get("id")
+                target = packet.get("to")
+                sender = packet.get("from")
+                ttl = packet.get("ttl", 0)
+
+                # 3. Дедупликация (защита от зацикливания)
+                if not await self.db.mark_packet_seen(pkt_id):
+                    return
+
+                # 4. Проверяем: Это МНЕ?
+                if target == self.my_id:
+                    print(f"📨 [MAIL] Received message from {sender[:8]}")
+                    content = packet.get("content")
+                    
+                    # --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
+                    # Используем UPSERT, чтобы гарантированно пометить отправителя как контакт
+                    await self.db.conn.execute("""
+                        INSERT INTO peers (user_id, is_contact, last_seen)
+                        VALUES (?, 1, ?)
+                        ON CONFLICT(user_id) DO UPDATE SET 
+                            is_contact = 1, 
+                            last_seen = excluded.last_seen
+                    """, (sender, datetime.now().isoformat()))
+
+                    # Сохраняем сообщение как новое (is_read=0)
+                    await self.db.conn.execute("""
+                        INSERT INTO messages (chat_id, sender_id, content, timestamp, is_outgoing, is_read) 
+                        VALUES (?, ?, ?, ?, 0, 0)
+                    """, (sender, sender, content, datetime.now().isoformat()))
+                    await self.db.conn.commit()
+                    return
+
+                # 5. Это НЕ мне -> РЕТРАНСЛЯЦИЯ (Relay)
+                if ttl > 0:
+                    print(f"🔀 [ROUTER] Relaying {pkt_id[:8]} for {target[:8]} (TTL: {ttl})")
+                    packet["ttl"] = ttl - 1
+                    new_payload = json.dumps(packet)
+                    
+                    # Кладем пакет в Outbox. Указываем exclude_peer, чтобы не слать обратно.
+                    await self.db.conn.execute("""
+                        INSERT INTO outbox (packet_id, target_id, packet_json, exclude_peer) 
+                        VALUES (?, ?, ?, ?)
+                    """, (pkt_id, target, new_payload, from_peer))
+                    await self.db.conn.commit()
+                else:
+                    print(f"💀 [ROUTER] Packet {pkt_id[:8]} died (TTL expired)")
+
+        except Exception as e:
+            print(f"❌ Packet error: {e}")
+        try:
+            envelope = json.loads(envelope_json)
+            if envelope.get("t") == "DUMMY": return
+
+            if envelope.get("t") == "REAL":
+                inner_json = envelope.get("d")
+                packet = json.loads(inner_json)
+                pkt_id, target, sender, ttl = packet.get("id"), packet.get("to"), packet.get("from"), packet.get("ttl", 0)
+
+                if not await self.db.mark_packet_seen(pkt_id): return
+
+                if target == self.my_id:
+                    print(f"📨 [MAIL] Received message from {sender[:8]}")
+                    content = packet.get("content")
+                    await self.db.conn.execute("INSERT OR IGNORE INTO peers (user_id, is_contact, last_seen) VALUES (?, 1, ?)", (sender, datetime.now().isoformat()))
+                    await self.db.conn.execute("INSERT INTO messages (chat_id, sender_id, content, timestamp, is_outgoing, is_read) VALUES (?, ?, ?, ?, 0, 0)", (sender, sender, content, datetime.now().isoformat()))
+                    await self.db.conn.commit()
+                elif ttl > 0:
+                    print(f"🔀 [ROUTER] Relaying {pkt_id[:8]} for {target[:8]} (TTL: {ttl})")
+                    packet["ttl"] = ttl - 1
+                    await self.db.conn.execute("INSERT INTO outbox (packet_id, target_id, packet_json, exclude_peer) VALUES (?, ?, ?, ?)", (pkt_id, target, json.dumps(packet), from_peer))
+                    await self.db.conn.commit()
+        except Exception as e:
+            print(f"❌ Packet error: {e}")
+
+================================================================================
+ФАЙЛ: client\backend\tact.py
+Размер: 3081 байт
+================================================================================
+
+import asyncio
+import json
+import random
+import string
+import time
+from database import DatabaseManager
+from network import P2PNode
+
+class TactEngine:
+    """
+    Генератор тактов. Обеспечивает ритмичную отправку пакетов
+    для защиты от анализа трафика.
+    """
+    def __init__(self, db: DatabaseManager, node: P2PNode, interval: float, packet_size: int):
+        self.db = db
+        self.node = node
+        self.interval = interval
+        self.packet_size = packet_size
+        self.running = False
+
+    async def start(self):
+        self.running = True
+        print(f"⏱️ [TACT] Engine started. Tick: {self.interval}s")
+        while self.running:
+            start_time = time.time()
+            await self._tick()
+            elapsed = time.time() - start_time
+            sleep_time = max(0.1, self.interval - elapsed)
+            await asyncio.sleep(sleep_time)
+
+    async def _tick(self):
+        neighbors = list(self.node.active_connections.items())
+        if not neighbors: return
+
+        async with self.db.conn.execute("SELECT id, target_id, packet_json, exclude_peer FROM outbox ORDER BY created_at ASC LIMIT 5") as cursor:
+            rows = await cursor.fetchall()
+
+        if not rows:
+            dummy = self._create_envelope("", is_dummy=True)
+            for _, ws in neighbors:
+                try: await ws.send(dummy)
+                except: pass
+            return
+
+        for row in rows:
+            msg_db_id, target_id, payload, exclude_peer = row['id'], row['target_id'], row['packet_json'], row['exclude_peer']
+            envelope = self._create_envelope(payload, is_dummy=False)
+            direct_ws = self.node.active_connections.get(target_id)
+            
+            if direct_ws:
+                try:
+                    await direct_ws.send(envelope)
+                    print(f"🚀 [TACT] Direct send to {target_id[:8]}")
+                except: pass
+            else:
+                sent_count = 0
+                for peer_id, ws in neighbors:
+                    if peer_id == exclude_peer: continue
+                    try:
+                        await ws.send(envelope)
+                        sent_count += 1
+                    except: pass
+                if sent_count > 0:
+                    print(f"📢 [TACT] Flooded packet to {sent_count} neighbors")
+
+            await self.db.conn.execute("DELETE FROM outbox WHERE id = ?", (msg_db_id,))
+        await self.db.conn.commit()
+
+    def _create_envelope(self, payload_str: str, is_dummy: bool) -> str:
+        msg_type = "DUMMY" if is_dummy else "REAL"
+        envelope = { "t": msg_type, "d": payload_str, "x": "" }
+        current_len = len(json.dumps(envelope).encode('utf-8'))
+        padding_needed = self.packet_size - current_len
+        if padding_needed > 0:
+            envelope["x"] = ''.join(random.choices(string.ascii_letters + string.digits, k=padding_needed))
+        return json.dumps(envelope)
+
+================================================================================
+ФАЙЛ: client\backend\__init__.py
+Размер: 0 байт
+================================================================================
+
+
+
+================================================================================
+ФАЙЛ: client\docker\messenger.Dockerfile
+Размер: 634 байт
+================================================================================
+
+FROM python:3.10-slim
+
+RUN apt-get update && apt-get install -y openssl
+
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# prepare a place for certs
+RUN mkdir -p /app/certs
+
+# Copy application code
+COPY backend/ /app/
+
+# 2) Copy your frontend into exactly the folder your code mounts
+RUN mkdir -p /app/backend/frontend
+COPY frontend/ /app/backend/frontend
+
+# COPY certs/ /app/certs
+
+# Copy the start script and make it executable
+COPY docker/start.sh /app/
+RUN chmod +x /app/start.sh
+
+# Change CMD to run the start script
+CMD ["/app/start.sh"]
+
+================================================================================
+ФАЙЛ: client\docker\start.sh
+Размер: 1057 байт
+================================================================================
+
+#!/usr/bin/env bash
+set -e
+
+# 1) Ensure certs folder exists
+mkdir -p /app/certs
+
+# 2) Generate a self‑signed cert if none exist
+if [[ ! -f /app/certs/cert.pem || ! -f /app/certs/key.pem ]]; then
+  echo "Generating self‑signed TLS cert for localhost…"
+  openssl req -x509 -nodes -days 365 \
+    -newkey rsa:2048 \
+    -keyout /app/certs/key.pem \
+    -out    /app/certs/cert.pem \
+    -subj   "/CN=localhost"
+fi
+
+# 3) Start your FastAPI app in background
+echo "Starting D-MASH Node via main.py…"
+python /app/backend/main.py & # <--- ИЗМЕНЕНО
+API_PID=$!
+
+# 4) Wait for it to come up
+echo "Waiting for server to start…"
+sleep 2
+
+# 5) Show access info
+cat <<EOF
+
+===============================================
+  Secure Chat is running at:
+    https://localhost
+===============================================
+EOF
+
+# 6) Optional: open browser if DISPLAY is set
+if [ -n "$DISPLAY" ] && command -v xdg-open >/dev/null; then
+  xdg-open https://localhost >/dev/null 2>&1 || true
+fi
+
+# 7) Keep container alive until messenger.py exits
+wait $API_PID
+
+================================================================================
+ФАЙЛ: client\frontend\auth\login.html
+Размер: 2075 байт
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D-MASH ACCESS</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .terminal { border: 2px solid #0f0; padding: 40px; width: 400px; box-shadow: 0 0 20px #0f0; }
+        input { background: #000; border: none; border-bottom: 1px solid #0f0; color: #0f0; width: 100%; padding: 10px; margin: 10px 0; font-family: inherit; font-size: 18px; outline: none; }
+        button { background: #0f0; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background: #0a0; }
+        h1 { text-align: center; margin-top: 0; text-shadow: 0 0 10px #0f0; }
+        label { font-size: 12px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <h1>D-MASH NODE</h1>
+        
+        <label>> USERNAME (IDENTITY):</label>
+        <input type="text" id="username" autofocus>
+        
+        <label>> ACCESS KEY (PASSWORD):</label>
+        <input type="password" id="pwd">
+        
+        <button onclick="login()">INITIALIZE SYSTEM</button>
+    </div>
+    <script>
+        async function login() {
+            const user = document.getElementById('username').value;
+            const pwd = document.getElementById('pwd').value;
+            
+            if (!user || !pwd) {
+                alert("IDENTITY REQUIRED");
+                return;
+            }
+
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: user, password: pwd})
+            });
+            const data = await res.json();
+            if(data.status === 'ok') {
+                localStorage.setItem('my_id', data.user_id);
+                window.location.href = '/chat/chat.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
+================================================================================
+ФАЙЛ: client\frontend\chat\chat.css
+Размер: 5831 байт
+================================================================================
+
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
+
+body { 
+  display: flex; 
+  height: 100vh; 
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+#chatWindow {
+  display: none;
+  background: #0b0b3b;
+}
+
+.chat-header {
+  display: none;
+}
+
+.input-bar {
+  display: none;
+}
+
+
+
+/* Sidebar styles */
+.sidebar {
+  width: 300px;
+  background: #b3d9ff;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #0f1a44;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  background: #d0e4ff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.sidebar h2 { 
+  color: rgb(128, 0, 128);
+  font-size: 20px;
+  text-align: center;
+  padding: 15px 10px;
+  flex-grow: 1;
+}
+
+.close-button {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.close-button:hover {
+  background-color: darkred;
+}
+
+.create-chat {
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  background: #b3d9ff;
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+}
+
+.create-chat input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #aac8ff;
+}
+
+.create-chat button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-list { 
+  list-style: none; 
+  flex-grow: 1;
+  overflow-y: auto;
+  background: #b3d9ff;
+  position: relative;
+  min-height: calc(100vh - 150px);
+}
+
+#chatList .empty {
+  background: #d0e4ff;
+  color: #333;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 5px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 40px);
+  border: 1px solid #aac8ff;
+}
+
+#chatList .empty::before {
+  content: "💬";
+  font-size: 24px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+#chatList .loading,
+#chatList .error {
+  background: #d0e4ff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 5px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 40px);
+}
+
+.chat-list li {
+  position: relative;
+  padding: 10px;
+  background: #d0e4ff;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid #aac8ff;
+}
+
+/* the little red “unread” dot */
+.chat-list li .unread-dot {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.chat-list li:hover { 
+  background: #aac8ff; 
+}
+
+/* Chat window styles */
+.chat-window {
+  flex-grow: 1;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  background: #192a56;
+  padding: 10px 20px;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.chat-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.chat-header .contact-info { 
+  flex-grow: 1;
+  font-weight: bold;
+}
+
+.chat-header .buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.chat-header button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.chat-header button:hover {
+  transform: scale(1.1);
+}
+
+.map-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.map-button:hover {
+  transform: scale(1.1);
+}
+
+.messages {
+  position: relative;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  padding-top: 70px;
+  padding-bottom: 80px;
+}
+
+/* the center bubble */
+.no-chat-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #c8e3ff;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.message {
+  padding: 12px 15px;
+  border-radius: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message.sent {
+  background: #58a6ff;
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+}
+
+.message.received {
+  background: #d0e4ff;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+}
+
+.input-bar {
+  padding: 15px 20px;
+  background: #192a56;
+  position: sticky;
+  bottom: 0;
+  gap: 10px;
+}
+
+.input-bar input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+}
+
+.input-bar button {
+  padding: 12px 20px;
+  background: purple;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.input-bar button:hover {
+  background: #6a0dad;
+}
+
+.notification {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f44336;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: none;
+  z‑index: 1000;
+}
+.notification.show {
+  display: block;
+  animation: fadeOut 3s forwards;
+}
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Візуально привабливіші роздільники дат */
+.date-divider {
+  text-align: center;
+  margin: 20px 0;
+  user-select: none;
+  position: relative;
+}
+
+.date-divider span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(90deg, #4576c5, #6a98db);
+  border-radius: 16px;
+  padding: 5px 15px;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+.unread-badge {
+    display: inline-block;
+    background: #e63946; /* Ярко-красный */
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 8px;
+    line-height: 14px;
+    vertical-align: middle;
+}
+
+================================================================================
+ФАЙЛ: client\frontend\chat\chat.html
+Размер: 5602 байт
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D-MASH TERMINAL</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #050505; color: #ccc; font-family: 'Courier New', monospace; margin: 0; display: flex; height: 100vh; }
+        
+        .sidebar { width: 300px; background: #000; border-right: 1px solid #333; display: flex; flex-direction: column; }
+        .header { padding: 20px; border-bottom: 1px solid #333; color: #0f0; font-weight: bold; }
+        .peer-list { flex: 1; padding: 10px; overflow-y: auto; }
+        .peer-item { padding: 15px; border: 1px solid #222; margin-bottom: 5px; cursor: pointer; color: #888; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .peer-item:hover { border-color: #0f0; color: #fff; background: #111; }
+        .peer-item.active { border-color: #0f0; background: #0a0a0a; color: #fff; }
+        .peer-name { font-weight: bold; color: #fff; }
+        .peer-id { font-size: 10px; color: #555; }
+        
+        .main { flex: 1; display: flex; flex-direction: column; background: #0a0a0a; }
+        .chat-header { padding: 15px; background: #000; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;}
+        .chat-view { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 70%; padding: 10px 15px; border-radius: 4px; line-height: 1.4; }
+        .msg.me { align-self: flex-end; background: #003300; border: 1px solid #005500; color: #cfc; }
+        .msg.other { align-self: flex-start; background: #222; border: 1px solid #444; color: #ccc; }
+        
+        .input-area { padding: 20px; border-top: 1px solid #333; display: flex; gap: 10px; background: #000; }
+        input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; outline: none; }
+        input:focus { border-color: #0f0; }
+        button { background: #0f0; color: #000; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; }
+        
+        .status { padding: 5px 20px; background: #000; border-top: 1px solid #333; font-size: 12px; color: #555; display: flex; justify-content: space-between; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-box { background: #000; border: 1px solid #0f0; padding: 30px; width: 400px; }
+        .modal h3 { color: #0f0; margin-top: 0; }
+        
+        .btn-small { padding: 2px 5px; font-size: 10px; background: #333; color: #fff; border: 1px solid #555; margin-left: 5px; }
+        .btn-small:hover { border-color: #0f0; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="header">
+        D-MASH
+        <div style="font-size: 10px; color: #666; margin-top: 5px;" id="my-id">ID: </div>
+        <button onclick="logout()" class="btn-small" style="background: #500; border-color: #800; float: right;">LOGOUT</button>
+          </div>
+        <div style="padding: 10px;">
+            <button onclick="showConnect()" style="width: 100%; padding: 10px; background: #222; color: #fff; border: 1px solid #444;">+ CONNECT NODE</button>
+        </div>
+        <div class="peer-list" id="peers"></div>
+        <div style="padding: 10px;">
+             <input id="targetId" placeholder="Paste Peer ID" style="width: 100%; margin-bottom: 5px;">
+             <button onclick="startChat()" style="width: 100%; background: #005500; color: #fff;">OPEN CHAT</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="chat-header" id="chatHeader" style="display:none;">
+            <span id="chatTitle">Chat</span>
+            <button class="btn-small" onclick="showRename()">RENAME</button>
+        </div>
+        <div class="chat-view" id="messages">
+            <div style="text-align: center; color: #333; margin-top: 100px;">
+                TACT PROTOCOL ACTIVE<br>WAITING FOR PACKETS...
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="msgInput" placeholder="Type encrypted message..." onkeypress="if(event.key==='Enter') send()">
+            <button onclick="send()">SEND</button>
+        </div>
+        <div class="status" id="statusBar"></div>
+    </div>
+
+    <!-- Connect Modal -->
+    <div class="modal" id="connectModal">
+        <div class="modal-box">
+            <h3>ESTABLISH LINK</h3>
+            <input type="text" id="nodeAddress" placeholder="IP:PORT (e.g. node2:9000)">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="connectNode()">CONNECT</button>
+                <button onclick="document.getElementById('connectModal').style.display='none'" style="background: #333; color: #fff;">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Modal -->
+    <div class="modal" id="renameModal">
+        <div class="modal-box">
+            <h3>RENAME CONTACT</h3>
+            <input type="text" id="newName" placeholder="Enter nickname (e.g. Alice)">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="submitRename()">SAVE</button>
+                <button onclick="document.getElementById('renameModal').style.display='none'" style="background: #333; color: #fff;">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>
+
+================================================================================
+ФАЙЛ: client\frontend\chat\chat.js
+Размер: 7230 байт
+================================================================================
+
+let currentChatId = null;
+let peersMap = {}; 
+const myId = localStorage.getItem('my_id');
+
+async function init() {
+    if (!myId) {
+        window.location.href = '/auth/login.html';
+        return;
+    }
+    document.getElementById('my-id').innerText = `ID: ${myId.substring(0, 16)}...`;
+    
+    updateState();
+    setInterval(updateState, 2000);
+    setInterval(refreshMessages, 1000);
+}
+
+async function logout() {
+    await fetch('/api/logout', { method: 'POST' });
+    localStorage.removeItem('my_id');
+    window.location.href = '/auth/login.html';
+}
+
+async function updateState() {
+    const resState = await fetch('/api/state').then(res => res.json()).catch(() => ({ peers: [] }));
+    
+    document.getElementById('statusBar').innerHTML = `
+        <span>NEIGHBORS: ${resState.peers.length}</span>
+        <span>ID: ${myId.substring(0,8)}</span>
+        <span style="color:#0f0">TACT: ACTIVE</span>
+    `;
+
+    const resPeers = await fetch('/api/peers').then(res => res.json()).catch(() => []);
+    
+    const list = document.getElementById('peers');
+    list.innerHTML = '';
+    
+    peersMap = {};
+    resPeers.forEach(p => peersMap[p.user_id] = p);
+
+    resPeers.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'peer-item';
+        if (currentChatId === p.user_id) div.classList.add('active');
+        
+        const isOnline = resState.peers.includes(p.user_id);
+        const statusColor = isOnline ? '#0f0' : '#555';
+        const displayName = p.nickname ? p.nickname : p.user_id.substring(0, 8) + '...';
+        
+        const unreadCount = (p.user_id !== currentChatId && p.unread_count > 0) ? p.unread_count : 0;
+        const unreadBadge = unreadCount > 0 
+            ? `<span style="background:#e63946; color:#fff; border-radius:10px; padding:1px 6px; font-size:10px; font-weight:bold; margin-left:8px; line-height:14px; vertical-align:middle;">${unreadCount}</span>`
+            : '';
+        
+        div.innerHTML = `
+            <div>
+                <div class="peer-name">${displayName} ${unreadBadge}</div>
+                <div class.peer-id">${p.user_id.substring(0, 16)}</div>
+            </div>
+            <div style="width:8px; height:8px; border-radius:50%; background:${statusColor}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+        `;
+        
+        div.onclick = () => startChat(p.user_id);
+        list.appendChild(div);
+    });
+    
+    if (currentChatId) {
+        const p = peersMap[currentChatId];
+        const name = p && p.nickname ? p.nickname : (currentChatId.substring(0, 8) + '...');
+        document.getElementById('chatTitle').innerText = `Chat with: ${name}`;
+    }
+}
+
+async function startChat(targetId = null) {
+    targetId = targetId || document.getElementById('targetId').value;
+    if(!targetId) return;
+
+    if (!peersMap[targetId]) {
+        await fetch('/api/rename', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({target_id: targetId, name: null})
+        });
+        await updateState();
+    }
+    
+    currentChatId = targetId;
+    document.getElementById('chatHeader').style.display = 'flex';
+    document.getElementById('messages').innerHTML = '';
+    
+    await fetch('/api/read_chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({chat_id: currentChatId})
+    });
+
+    const peerItem = document.querySelector(`.peer-item .peer-id[innerText^='${targetId}']`);
+    if(peerItem) {
+        const badge = peerItem.closest('.peer-item').querySelector('.unread-badge');
+        if(badge) badge.remove();
+    }
+    
+    Array.from(document.querySelectorAll('.peer-item')).forEach(el => {
+        el.classList.remove('active');
+        const peerIdEl = el.querySelector('.peer-id');
+        if (peerIdEl && peerIdEl.innerText.startsWith(targetId)) {
+            el.classList.add('active');
+        }
+    });
+
+    refreshMessages();
+}
+
+async function refreshMessages() {
+    if(!currentChatId) return;
+    
+    const res = await fetch(`/api/messages/${currentChatId}`);
+    const msgs = await res.json();
+    
+    const container = document.getElementById('messages');
+    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+
+    const newHtml = msgs.map(m => {
+        const time = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const status = m.is_outgoing ? '✓' : '';
+        return `
+            <div class="msg ${m.is_outgoing ? 'me' : 'other'}">
+                ${m.content}
+                <div style="font-size: 9px; opacity: 0.5; text-align: right; margin-top: 3px;">${time} ${status}</div>
+            </div>
+        `;
+    }).join('');
+
+    // Проверяем, есть ли новые сообщения (простая проверка по количеству)
+    const hasNewMessages = container.querySelectorAll('.msg').length < msgs.length;
+
+    if (container.innerHTML.length !== newHtml.length) {
+        container.innerHTML = newHtml;
+        if (isAtBottom) {
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
+        // Если мы в этом чате и появились новые сообщения,
+        // немедленно сообщаем бекенду, что мы их прочитали.
+        if (hasNewMessages) {
+            await fetch('/api/read_chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: currentChatId })
+            });
+        }
+    }
+}
+
+function showConnect() {
+    document.getElementById('connectModal').style.display = 'flex';
+}
+
+async function connectNode() {
+    const addr = document.getElementById('nodeAddress').value;
+    await fetch('/api/connect', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address: addr})
+    });
+    document.getElementById('connectModal').style.display = 'none';
+}
+
+function showRename() {
+    if (!currentChatId) return;
+    document.getElementById('renameModal').style.display = 'flex';
+    document.getElementById('newName').value = '';
+    document.getElementById('newName').focus();
+}
+
+async function submitRename() {
+    const name = document.getElementById('newName').value;
+    if (!name || !currentChatId) return;
+    
+    await fetch('/api/rename', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({target_id: currentChatId, name: name})
+    });
+    
+    document.getElementById('renameModal').style.display = 'none';
+    updateState();
+}
+
+async function send() {
+    const txt = document.getElementById('msgInput').value;
+    if(!txt || !currentChatId) return;
+    
+    await fetch('/api/send', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({target_id: currentChatId, text: txt})
+    });
+    
+    document.getElementById('msgInput').value = '';
+    refreshMessages();
+    setTimeout(updateState, 500);
+}
+
+init();
+
+================================================================================
+СТАТИСТИКА СБОРКИ
+================================================================================
+Всего собрано файлов: 18
+Пропущено файлов: 0
+Общий размер выходного файла: 60234 байт
